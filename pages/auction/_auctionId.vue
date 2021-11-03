@@ -18,7 +18,7 @@
             >
           </div>
           <b-message v-if="!auctionBids.length" type="is-info" size="is-large"
-            ><b>🤔 This auction has no bids yet!</b></b-message
+            ><b>🤔 This auction has no bids!</b></b-message
           >
           <b-table v-else striped :data="auctionBids">
             <b-table-column
