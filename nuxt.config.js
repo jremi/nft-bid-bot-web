@@ -36,12 +36,19 @@ export default {
   googleAnalytics: {
     id: process.env.GOOGLE_ANALYTICS_ID, // Use as fallback if no runtime config is provided
     debug: {
-      enabled: true,
+      enabled: false,
     },
   },
   publicRuntimeConfig: {
     googleAnalytics: {
       id: process.env.GOOGLE_ANALYTICS_ID,
+    },
+    axios: {
+      browserBaseURL: (() => {
+        return process.env.NODE_ENV === 'production'
+          ? 'https://nftbot.bid/'
+          : null // default to e.g.: http://localhost:3000/
+      })(),
     },
   },
 
