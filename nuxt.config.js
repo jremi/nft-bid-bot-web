@@ -27,7 +27,7 @@ export default {
         hid: 'og:image',
         name: 'og:image',
         content:
-          'https://pbs.twimg.com/profile_banners/1453139203223691267/1635291767/1500x500',
+          'https://i.imgur.com/HFLdQll.gif',
       },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
