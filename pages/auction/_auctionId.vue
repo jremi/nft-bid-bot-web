@@ -17,7 +17,10 @@
               ><b>{{ cryptoPriceUsd | currency }}</b></span
             >
           </div>
-          <b-table striped :data="auctionBids">
+          <b-message v-if="!auctionBids.length" type="is-info" size="is-large"
+            ><b>🤔 This auction has no bids yet!</b></b-message
+          >
+          <b-table v-else striped :data="auctionBids">
             <b-table-column
               v-slot="props"
               field="created_at"
