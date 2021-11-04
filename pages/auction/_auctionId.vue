@@ -17,16 +17,30 @@
               ><b>{{ cryptoPriceUsd | currency }}</b></span
             >
           </div>
+          <div v-if="auction.is_active" class="mb-3">
+            <client-only>
+              <h3 class="title is-5 has-text-centered mb-2">
+                Auction ending in
+              </h3>
+              <flip-countdown :deadline="auctionEndTimeStamp"></flip-countdown>
+            </client-only>
+          </div>
           <b-message v-if="!auctionBids.length" type="is-info" size="is-large"
-            ><b>🤔 This auction has no bids!</b></b-message
+            ><b
+              >🤔 This auction
+              {{ auction.is_active ? 'currently has no' : 'received no' }}
+              bids.</b
+            ></b-message
           >
-          <b-table v-else striped :data="auctionBids">
+          <b-table v-else striped :data="auctionBids" class="mt-4">
             <b-table-column
               v-slot="props"
               field="created_at"
               label="Bid placed on"
             >
-              {{ $moment(props.row.created_at).format('MM/DD/YY - hh:mm A') }}
+              <div class="mt-2">
+                {{ $moment(props.row.created_at).format('MM/DD/YY - hh:mm A') }}
+              </div>
             </b-table-column>
             <b-table-column
               v-slot="props"
@@ -36,28 +50,38 @@
               <a
                 :href="`https://twitter.com/${props.row.twitter_username}`"
                 target="_blank"
+                class="is-flex is-align-items-center"
                 :class="{ 'has-text-weight-bold': props.row.id === topBid.id }"
-                >@{{ props.row.twitter_username }}</a
               >
-              <span v-if="props.row.id === topBid.id" class="pl-2">🥇</span>
-              <span
-                v-else-if="auctionBids[1] && props.row.id === auctionBids[1].id"
-                class="pl-2"
-                >🥈</span
-              >
-              <span
-                v-else-if="auctionBids[2] && props.row.id === auctionBids[2].id"
-                class="pl-2"
-                >🥉</span
-              >
-              <span v-else class="pl-2"> </span>
+                <img
+                  :src="props.row.twitter_profile_pic"
+                  class="profile-pic mr-2"
+                />
+                <div>@{{ props.row.twitter_username }}</div>
+                <span v-if="props.row.id === topBid.id" class="pl-2">🥇</span>
+                <span
+                  v-else-if="
+                    auctionBids[1] && props.row.id === auctionBids[1].id
+                  "
+                  class="pl-2"
+                  >🥈</span
+                >
+                <span
+                  v-else-if="
+                    auctionBids[2] && props.row.id === auctionBids[2].id
+                  "
+                  class="pl-2"
+                  >🥉</span
+                >
+                <span v-else class="pl-2"> </span>
+              </a>
             </b-table-column>
             <b-table-column
               v-slot="props"
               field="bid_amount"
               label="Bid amount"
             >
-              <b-tag type="is-dark"
+              <b-tag type="is-dark" class="mt-2"
                 ><b>{{ props.row.bid_amount }} {{ auction.currency }}</b></b-tag
               >
             </b-table-column>
@@ -75,10 +99,14 @@
 </template>
 
 <script>
+import FlipCountdown from 'vue2-flip-countdown'
 import CoinGecko from 'coingecko-api'
 import CoinGeckoCoinsList from '@/assets/json/coingecko-coins-list.json'
 
 export default {
+  components: {
+    FlipCountdown,
+  },
   async asyncData({ route, $axios }) {
     const { data: auction } = await $axios.$get(
       `api/auction/${route.params.auctionId}`
@@ -102,6 +130,14 @@ export default {
     },
     topBid() {
       return this.auction.auction_bids ? this.auction.auction_bids[0] : null
+    },
+    auctionEndTimeStamp() {
+      return this.$moment(
+        this.auction.twitter_auction_created_at,
+        'ddd MMM DD HH:mm:ss ZZ YYYY'
+      )
+        .add(this.auction.duration_value, this.auction.duration_type)
+        .format('YYYY-MM-DD hh:mm:ss')
     },
   },
   mounted() {
@@ -138,6 +174,12 @@ export default {
 .page-auction .table {
   border: 1px solid #d1d9dd;
   border-radius: 12px;
+}
+
+.page-auction .profile-pic {
+  border-radius: 50%;
+  width: 40px;
+  border: 1px solid whitesmoke;
 }
 
 .page-auction .table tbody tr:last-child,
