@@ -1,9 +1,13 @@
 require('dotenv').config()
 
 const express = require('express')
+const cors = require('cors')
 
 // Create express instance
 const app = express()
+
+// Enable default CORS options
+app.use(cors())
 
 // Init body-parser options (inbuilt with express)
 app.use(express.json())
