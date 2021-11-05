@@ -132,12 +132,13 @@ export default {
       return this.auction.auction_bids ? this.auction.auction_bids[0] : null
     },
     auctionEndTimeStamp() {
-      return this.$moment(
-        this.auction.twitter_auction_created_at,
-        'ddd MMM DD HH:mm:ss ZZ YYYY'
-      )
+      const gmtDateTime = this.$moment
+        .utc(
+          this.auction.twitter_auction_created_at,
+          'ddd MMM DD hh:mm:ss ZZ YYYY'
+        )
         .add(this.auction.duration_value, this.auction.duration_type)
-        .format('YYYY-MM-DD hh:mm:ss')
+      return gmtDateTime.local().format('YYYY-MM-DD HH:mm:ss')
     },
   },
   mounted() {
