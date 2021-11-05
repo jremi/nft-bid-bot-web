@@ -142,10 +142,12 @@ export default {
     },
   },
   mounted() {
-    this.poller = setInterval(async () => {
-      await this.fetchAuction()
-      await this.fetchCryptoPriceUsd()
-    }, 10000)
+    if(this.auction.is_active) {
+      this.poller = setInterval(async () => {
+        await this.fetchAuction()
+        await this.fetchCryptoPriceUsd()
+      }, 10000)
+    }
   },
   beforeDestroy() {
     clearInterval(this.poller)
@@ -157,6 +159,9 @@ export default {
       )
       auctionData?.auction_bids?.reverse() // desc
       this.auction = auctionData
+      if (!this.auction.is_active) {
+        clearInterval(this.poller);
+      }
     },
     async fetchCryptoPriceUsd() {
       const CoinGeckoClient = new CoinGecko()
