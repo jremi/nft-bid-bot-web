@@ -7,8 +7,18 @@
       <div class="columns">
         <div class="column">
           <b-message v-if="!auction.is_active" type="is-warning" size="is-large"
-            ><b>👋 Howdy! This auction is no longer active.</b></b-message
+            ><b>👋 Hey there! This auction is closed.</b></b-message
           >
+          <b-message
+            v-if="!auction.is_active && auctionBids.length"
+            type="is-success"
+            size="is-large"
+          >
+            <b
+              >💰 To settle this auction the winning bidder and seller must
+              directly coordinate the transfer of this NFT.</b
+            >
+          </b-message>
           <div v-if="!auction.is_active && topBid" class="title is-5">
             Sold for:
             <b-tag size="is-large" type="is-success"
@@ -142,7 +152,7 @@ export default {
     },
   },
   mounted() {
-    if(this.auction.is_active) {
+    if (this.auction.is_active) {
       this.poller = setInterval(async () => {
         await this.fetchAuction()
         await this.fetchCryptoPriceUsd()
@@ -160,7 +170,7 @@ export default {
       auctionData?.auction_bids?.reverse() // desc
       this.auction = auctionData
       if (!this.auction.is_active) {
-        clearInterval(this.poller);
+        clearInterval(this.poller)
       }
     },
     async fetchCryptoPriceUsd() {
